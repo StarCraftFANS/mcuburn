@@ -1,0 +1,206 @@
+*******************************************************************************
+
+  NOTE: o NEVER program security fuse's if your using a ceramic windowed
+          EPROM version of the PIC 16C74 microcontroller !. The fuse's can't
+          be erased by UV light, so it's an expensive windowed OTP version.
+
+        o In-circuit programming requires the OSC1/CLKIN pin be grounded
+          this in order to avoid problems with the internal program counter.
+
+*******************************************************************************
+
+  pic74.c : A serial mode PIC16C74 programmer
+
+  Features:
+
+       o  Auto detects the hex object file formats, INHX16 or INHX8M.
+       o  Skip unused memory locations and 0x3FFF data bytes during
+           Programming mode.
+       o  Features true PC speed independent 100uS programming puls.
+       o  Embedded fuse information in object file is supported.
+       o  Fuse information is saved in object file, if PIC16C74 is read.
+       o  Auto programming mode, first the PIC is blankchecked then programmed
+           and finally a verify is performed.
+       o  Features Read/Dump mode.
+
+  Notes/restrictions/bugs:
+
+       o  Software needs a IBM compliant computer.
+       o  This program needs external hardware to be attached
+           to a parallel port (see pp.asc for an ASCII schematic).
+       o  Don't use from Windows; another program could grab the LPT port.
+       o  Run pic74, pic74 -s -2 or pic74 -s -3 to initialise the LPT port.
+       o  Run pic74, pic74 -t -2 or pic74 -t -3 to test computer and hardware.
+       o  This is NOT a production quality programmer. (No surprise!).
+
+  Revision history:
+
+  ??-Aug-1996: V-0.0;  Wrote the main code in just one day !.
+  ??-Aug-1996: V-0.1b; First code to successfully program a 16C74.
+  10-Aug-1996: V-0.1b; Removed a few bugs, thanks to Ed's help !.
+  18-Aug-1996: V-0.1b; Modified the 100uS delay, added timeout.
+  30-Aug-1996: V-0.1b; Added PIT hardware detect and timing correction.
+  20-Sep-1996: V-0.1b: Added auto detect object file format INHX8M or INHX16.
+  30-Sep-1996: V-1.0b; Software and source code released to the internet.
+
+  ??-???-19??: V-1.0 ; if no bug reports are received by the end of this year.
+
+
+  This version (V-1.0b) is a public beta release. If you receive this program
+  consider yourself a beta tester (of course, you are under no
+  obligation).  I will remove beta status when 10 (arbitrary
+  I know) testers tell me they have used it to successfully program a
+  PIC using the hardware in pp.asc.
+
+
+  Usage:
+
+       pic74  [-rpbvadst] [ -lxhrwpc238 ]  objfile
+
+  Where objfile is the program data in Intel hex format.
+  Various things, including the fuse details, can be set on the
+  command line using the switches described below. Superfluous
+  command line arguments are silently ignored and later switches
+  take precedence, even if contradictory. The hex object file format
+  is automatically detected by software, the detected file format
+  is displayed on the screen. The object file is checked for validity
+  by checking the file type, address range, checksum and lost of bytes.
+
+  Switches (options) are introduced by - (or /) and are encoded as
+  a sequence of one or more characters from the sets {rpbvadst} and/or
+  {lxhrwpc238} Switches can be given individually (like -r /2 -p) or
+  in groups (like -r2p or /rp2 or /2/r/p which are all synonyms).
+  Switches are recognized anywhere in the command line
+  (but don't use the DOS-like pic74/r/p/2  form - this should be written
+  pic74 /r/p/2;  space around switch groups is important).
+
+  There are six different mode's of operation:
+
+  Modes:
+     o    d           -  read memory and dump to screen.
+     o    r           -  read memory and store data in objfile.
+     o    p           -  program memory and read data from objfile.
+     o    v           -  verify program memory and data from objfile.
+     o    b           -  blankcheck program and configuration memory.
+     o    a           -  blankcheck, program and verify data from objfile.
+
+  There are three logical groups of switches: fuses, ports, hex-types.
+  They can be mixed freely.
+
+  Fuses:
+     o    l, x, h, r  -  LP, XT, HS or RC oscillator (default LP).
+     o    w           -  enable watchdog timer.
+     o    p           -  enable power-up timer.
+     o    c           -  enable code protection.
+  Ports:
+     o   2, 3         -  hardware on LPT2 or LPT3 (default is LPT1).
+  Hex-types:
+     o   8            -  objfiles are Intel Hex-8, i.e. INHX8M
+                         (default is Intel Hex-16, i.e. INHX16)
+                         (The software auto detects the Intel hex type)
+
+  E.g., -a -rp28 means use autoprogram mode (blankcheck, program and verify)
+  set the fuses to use the RC oscillator, no watchdog, use power-up timer,
+  and don't protect code; assume the hardware is on LPT2 and the objfiles
+  are in INHX8M format. The software will detect and correct if a different
+  file type is detected, specifying the file type makes sense if the data is
+  being saved on disk using one of the two hex formats. The INHX16 hex format
+  is however prefered and advised above the INHX8M hex format.
+
+
+  Improvements :
+
+       o Support the 16C74A and other members of the Microchip family (easy),
+          if I receive a request or have to kill some time,
+
+       o Write a programmer for the 12C5XX family of chips (easy),
+          ASAP, when I receive the windowed 12C5XX version.
+
+       o IýC support using the same hardware (easy),
+          when I need it.
+
+       o Porting the sofware to Window NT (porting to W95 is a waste of time).
+          ??.
+
+       o Making the programmer a true production quality programmer.
+         VCC switching (4.5v-5.5v). (hardware and software modification)
+
+       o Add a GUI (waste of time?).
+       o Lots of other stuff I just don't have time for.
+
+  Acknowledgements:
+
+  Many thanks to Edwin Gouweloos for trusting my programming skills
+  and testing beta release 0.1b. You must be really MAD or BLIND if
+  you trust my programming skills Ed, Especially the first release.
+  I hope the SYNC-MATE will be a success, Ed !. The SYNC-MATE is worlds
+  smallest RISC based sync/async wonder box, with super-computer power.
+
+  Thanks to David Tait for his idea of the LPT programmer and his
+  pp.exe program (16C84 programmmer) without it I wouldn't be able to
+  write this program (many thanks).
+
+  The programming algorithms used are taken from the data sheets
+  DS30228D/E/F (C) 1995/1996 Microchip Technology Incorporated.
+  Thanks to Arizona Microchip Technology Ltd for making this information
+  available without restriction.
+
+  The PC printer port FAQ by Zhahai Stewart for useful info on
+  PC parallel ports.
+
+
+  Hardware requirements:
+
+  The software is tested using the following hardware:
+
+       80386 33 Mhz Portable by Texas Instruments.     (Not quiet Compliant)
+       80486DX2 66 Mhz SOYO Motherboard 25E2.          (Fully Compliant)
+       Pentium 133 Mhz ASUS Motherboard P55T2P4.       (Fully Compliant)
+       Pentium Pro 200 Mhz Intel Motherboard Aurora.   (Fully Compliant)
+
+
+  The software is written in such a way that it's CPU speed independent,
+  however I made the assumption that the used hardware is IBM compliant.
+  This means that the PIT timer 1 is set to 15.08 uS (count 18), and that
+  the timer 1 overflow bit can be found at address 0x61,4. If this isn't
+  so then a special timeout mechanism ensures that the program puls doesn't
+  exceed the length specified by MICROCHIP. However before programming a
+  16C74 it's advised to test your computers hardware by issuing the -t
+  command. This command will test if your computers hardware is IBM
+  compliant, if it isn't then the program will try to adjust the hardware
+  in such a way that it meets the standard. We strongly advice not to use
+  the programmer if the hardware can't be made compliant, if you do use
+  the programmer it can/will permanently damage the device.
+
+
+  Legal stuff:
+
+  This is copyright software, but I do not seek to profit from
+  it.  I wrote it in the hope that it will prove useful.  Feel
+  free to modify the program, but please DO NOT distribute
+  modified versions.  Instead, send me your modifications and
+  improvements so that they may, at my discretion, be included in a
+  future release.
+
+  Although I cannot undertake to support this software, I would
+  welcome bug reports, suggestions or comments which should be
+  sent to:
+
+     Paul Vollebregt
+     Po Box 65824
+     The Hague 2506 CE.
+     The Netherlands, NL.
+     EUROPE.
+
+     e-mail: vollebre@worldonline.nl
+
+
+  Copyright (C) 1996 Paul Vollebregt
+  This program is free software.  Permission is granted to use,
+  copy, or redistribute this program so long as it is not sold
+  for profit.
+
+  THIS PROGRAM IS PROVIDED AS IS AND WITHOUT WARRANTY OF ANY KIND,
+  EITHER EXPRESSED OR IMPLIED.
+
+

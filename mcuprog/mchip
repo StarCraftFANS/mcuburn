@@ -1,0 +1,106 @@
+
+File Edit
+
+
+Read    [ listbox for devices ]         
+
+Write
+
+Verify
+
+
+Find
+
+Add
+
+DisAssemble
+
+
+Lock
+
+Debug                           connect  disconnect close
+
+
+
+
+
+
+Add               Interface   Device
+
+                              Vendor  []
+                              
+                              Processor/Processor Family
+                              []
+				
+
+                              Type of Chips:
+
+                              Programmer Type
+
+                              Interface type:
+
+            Flash programmer:
+
+		[]
+
+
+
+          Jtag programmer:
+
+
+
+
+Read:
+           Text Editor
+Disasemmble
+
+Write : Progress 
+
+
+Verify : difference
+
+
+Debug:
+
+
+
+
+
+
+
+
+
+
+
+                  
+
+
+
+
+
+
+
+
+         
+
+
+
+
+
+                                                     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

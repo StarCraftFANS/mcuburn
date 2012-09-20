@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="53"
+   name=""
+   committed-date="2007-01-23T17:40:50.816389Z"
+   url="svn://192.192.0.1/mcuprog/heximage"
+   last-author="root"
+   kind="dir"
+   uuid="8553746f-c726-0410-a30b-8dccbf3416dc"
+   repos="svn://192.192.0.1"
+   revision="53"/>
+<entry
+   committed-rev="53"
+   name="ihx.c"
+   text-time="2007-01-23T17:51:27.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="db425b6cd7927a689cfa276bf248ec3c"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:27.000000Z"/>
+<entry
+   committed-rev="53"
+   name="Makefile"
+   text-time="2007-01-23T17:51:27.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="0856db3ec2b3317279157e125ba536bf"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:27.000000Z"/>
+</wc-entries>

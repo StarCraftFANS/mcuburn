@@ -1,0 +1,163 @@
+.\" Man page for prog84, a 16C84 programmer driver
+.TH prog84 1 "26 December 1994"
+.SH NAME
+prog84 \- program a Microchip Technology PIC16C84 through the parallel port
+.SH SYNOPSIS
+\fBprog84\fP [\fB-abhv\fP] [\fB-i\fP \fIn1 n2 n3 n4\fP] [\fB-v\fP \fIfile\fP]
+.SH DESCRIPTION
+The
+.B prog84
+driver attempts to program a 16C84 EEPROM microcontroller in serial
+mode through a minimal driver circuit connected to a IBM-PC style
+parallel port. It is designed to work easily with any such circuit
+by using the correct configuration file. See the HARDWARE section
+for information on the external circuitry required and how to specify
+it to
+.BR prog84 .
+.PP
+By default, 
+.B prog84
+does nothing when invoked. These command line options control what happens,
+in the order they are specified on the command line.
+.PP
+.TP
+.B -h
+Emits a brief help message listing the acceptable command line
+parameters.
+.TP
+\fB-i\fP \fIn1 n2 n3 n4\fP
+Program the chip's ID words with the specified values. Each value is
+14 bits specified in C notation: decimal, or 
+.B 0
+followed by an octal value, or
+.B 0x
+followed by a value in hexadecimal.
+.TP
+\fB-p\fP \fIfilename\fP
+Program the PIC with the data contained in the 
+.BR pictools -format
+file
+.IR filename .
+.PP
+The following options modify the behavior of the programming options.
+.TP
+.B -a
+After writing any location, read it back to verify that it was correctly
+programmed.
+.TP
+.B -b
+Before writing any location, read it to see if it already contains the
+desired value. If so, the actual programming step is skipped. It's probably
+best to specify both the
+.B -a
+and 
+.B -b
+options when programming a microcontroller.
+.TP
+.B -v
+Be more verbose. This option can be specified multiple times to increase
+the amount of output produced. One
+.B -v
+elicits a terse status display, showing which locations are being
+programmed and whether they verify correctly. Two will show
+the results of the initial hardware test and dump the information read
+from the configuration file. Three will produce a line of output
+describing every bit clocked into the PIC and the bit read back
+(probably more information than is useful on a regular basis).
+.PP
+
+
+.SH HADRWARE
+The circuitry connected to the parallel port must have the ability to
+control the power, MCLR, clock (RB6), and data (RB7) pins of the
+16C84, as well as the ability to read back the state of the data (RB7)
+pin.
+.PP
+Information on the driver circuitry is read from the file
+.B lp_cfg
+in the working directory when 
+.B prog84
+is started. This file contains pin descriptions, one per line. Comments
+can be started with a hash mark and continue to the end of the line.
+Blank lines are ignored. Each data line must contain a pin name, a
+colon or equals sign, and a description of the parallel-port bit 
+used for that pin. 
+.PP
+A pin description can be \fBd\fP\fIn\fP to specify data bit \fIn\fP;
+\fBc\fP\fIn\fP to specify control bit \fIn\fP, or
+\fBs\fP\fIn\fP to specify status bit \fIn\fP.
+The bits are numbered starting with the LSB as 0, in the order
+they are found in the PC's I/O space. Any pin can be preceded
+by a tilde (~) or exclamation point (!) to reverse the sense of
+the bit, \fIe.g.\fP if the driver circuit uses inverting buffers.
+Additionally, some symbolic names are understood: \fBbusy\fP refers
+to status bit 7; \fBack\fP to status bit 6; and \fBerror\fP, bit 3.
+.PP
+The programmer requires the following bits to be specified:
+.TP
+power
+Set to 1 when the programmer wants the PIC's Vdd at +5 volts.
+.TP
+mclr
+Set to 1 when the programmer wants the PIC's /MCLR input set to
+the programming voltage (+13 volts).
+.TP
+clock
+Used to clock data into the PIC (connect to PIC pin 12)
+.TP
+data
+Used to write data and commands to the PIC (connect to PIC pin 13)
+.TP
+data_f
+A return line to read the state of the data pin
+.TP
+clock_f
+Optional; if specified, this should read the state of the clock pin
+at the PIC, and is used in the test sequence.
+.PP
+If your parallel port is at a base address other than 378 hex, you
+can specify the base address with a line of the form "base = 0x3bc".
+Even if your hardware allows you to read from bits other than the
+status bits (\fIe.g.\fP a bidirectional parallel port), 
+.B prog84
+is not smart enough to actually try to read from them.
+The data line is assumed to be open-collector; it will be driven
+high (1) when the driver wishes to read data back from the PIC.
+.SH BUGS
+The
+.B pictools
+file format is pretty esoteric, being produced by only one known 
+assembler. 
+.B prog84
+should be extended to read the common Intel Hex format. Currently the
+file checksum information in the file is ignored.
+.PP
+The program should be smart enough to use the parallel programming mode
+if enough pins are available.
+.PP
+Because of realtime timing requirements which are hard to meet in user
+mode on a Unixlike operating system, 
+.B prog84
+cannot program the other members of the PIC family.
+.PP
+The configuration file,
+.BR lp_cfg ,
+is always read from the current working directory, and has a somewhat
+restricted syntax. In particular, it would be useful to specify bits
+in terms of their positions on the DB-25 connector.
+.SH SEE ALSO
+The
+.B pictools
+assembler is written and maintained by Ian King, 
+iek@advanced-robotics-research-centre.salford.ac.uk
+and is available via anonymous FTP from ftp.funet.fi
+in the /pub/microprocs/pic directory.
+.PP
+This code is based on the specifications in the Microchip Technology
+1994 Data Book.
+.SH AUTHOR
+Written and copyright by Wim Lewis, 
+wiml@netcom.com, wiml@omnigroup.com, wiml@hhhh.org.
+You may use, modify, and redistribute this code as long as you retain
+the attributions and do not incorporate it into a commercial product.
+

@@ -1,0 +1,941 @@
+             Machine Independent Parallel Interface (MIPI)
+             =============================================
+             Version V-0.0                14th August 1995
+
+                              David Tait
+
+                      Electrical Engineering Dept
+                            The University
+                          Manchester M13 9PL
+                                  UK
+
+                          david.tait@man.ac.uk
+
+                      Copyright (C) 1995 David Tait
+        Permission is granted to copy, store or redistribute this
+        document provided the information contained herein is not
+        exploited for profit and the document remains intact and
+        unmodified.
+
+             This document contains ASCII diagrams and you
+             should select a mono-spaced font for correct
+             viewing; a proportional font will wreck them.
+
+
+Introduction
+============
+
+To the electronics hobbyist perhaps the most useful interface on an IBM PC
+or compatible is the parallel port.  All manner of hardware can be attached
+to this port and subsequently controlled with a few lines of C or BASIC.  Of
+course not all personal computers are IBM clones and some may not have a
+parallel port at all.  It can happen that the owners of these errant
+machines are also electronics hobbyists.  I suppose these people must be
+resigned to the absence of such a useful facility on their PC, but I suspect
+that they also feel disenfranchised when they come across yet another
+project that might have been fun to build if it hadn't relied on a parallel
+interface.  I find it annoying that I cannot use my desktop Sun workstation
+to play with the little gizmos that are such a breeze to use with my IBM
+compatible.  Many of these toys are based on chips that incorporate serial
+peripheral interface (SPI) or inter-integrated circuit (I2C) connections.
+It is pretty straightforward to attach these devices to a PC by "bit-banging"
+the SPI/I2C protocol using the parallel port; they are not so easy to use
+without a parallel interface.
+
+Although the parallel port may or may not be present on a given PC, it is
+almost certain that the same PC will have a serial port (often called,
+whether correctly or not, an RS232 interface).  This is fine for connecting
+a modem, a mouse or even another PC, but it is not so useful for connecting
+simple homebrew hardware.  There are several reasons for this: firstly, the
+signalling rate of the serial port falls far short of that possible using
+the parallel port; secondly, relatively complex hardware is needed to decode
+the serial data stream; and thirdly the voltage levels are not convenient.
+On certain systems (notably the IBM PC again) it is possible to use the modem
+signals (CTS, DTR, RTS, DSR and DCD) as general purpose I/O.  After level
+conversion these are great for many projects, however, it's unlikely that
+all machines let you fiddle with these lines, use them in a uniform way,
+or even possess them in the first place.
+
+Of course, there are many projects where speed is not important and in this
+case the main reason for not using the serial port is the hardware overhead.
+Even this is really only an impediment if the decoding hardware has to be
+replicated for each and every project.  It is much more attractive to build
+the required hardware just once and connect all projects via this.  One way
+of making this idea concrete is to design an RS232 hosted parallel
+interface.  Apart from the obvious benefits of providing a simple attachment
+for homebrew hardware there is another positive aspect which is worth
+considering.  To the extent that an RS232 port is available on all
+platforms, this means that the interface design would be machine
+independent, especially if we assume nothing more than transmit data (TXD)
+and receive data (RXD) are present.  Furthermore, the software controlling
+the hardware would simply need to generate and/or read a serial character
+stream.  Thus, apart from the serial I/O routines themselves, any
+controlling software can also be made platform independent.  If the host
+operating system has the ability to redirect program input/output via the
+serial port it's probably not necessary to provide the serial I/O routines
+either, but such a scheme is machine dependent.  If only output is required
+it is possible to store the appropriate character stream in an ordinary file
+and simply copy the file to the serial port.
+
+Anyway that's the aim of this project: a simple parallel interface with a
+modest amount of I/O (at least enough to bit bang SPI/I2C albeit sedately)
+that will work with any machine with a serial port of minimal functionality.
+This kind of interface is still useful for PCs that already have a parallel
+port (having now built one I can atest to that) even if only because you can
+now leave the printer attached.  Using the serial port also means less wires
+to connect and the interface can be attached at the end of a long cable
+without problems (though to be fair this is mostly due to the low data
+rate of the serial port).
+
+
+
+An RS232 Hosted Parallel Port
+=============================
+
+So much for the concept, how about the hardware design.  Well, I guess the
+most obvious design would employ a traditional UART.  A more modern and
+definitely more flexible approach is something like this:
+
+
+                      +----------+      +----------+
+               TXD    |          |      |          |
+                >-----|          |------|          |======>
+                      |  RS232   |      |  MICRO   |        Parallel
+               RXD    |INTERFACE |      |CONTROLLER|          I/O
+                <-----|          |------|          |<======
+                      |          |      |          |
+                      +----------+      +----------+
+
+
+This looks good, particularly as it's very easy to program some
+microcontrollers using a parallel port - a nice example of the chicken and
+the egg problem (or is it Catch 22?): if we had an interface like the one
+above we could probably use it to program the microcontroller needed to
+build the interface, but we don't have the interface yet.  (By the way, most
+microcontroller programmers described in hobby electronics magazines adopt
+the architecture shown above; this is very irritating for exactly the same
+reason).
+
+I suppose the project could be bootstrapped if we had access to a programmer
+or at least a PC with a parallel port so that we could build a programmer.
+Perhaps I should work hard to convince you that you really do need this kind
+of interface, design one based the latest XYZ microcontroller, and then
+offer to program the XYZ in return for your cash.  I must say that none of
+these options appeal to me. Instead I have chosen to go for an unambitious
+design that can be constructed at home without the need for any programmable
+parts.  This inevitably means that the hardware design is somewhat more
+complicated than a microcontroller based solution, but on the other hand it
+can run at very high baud rates that would leave a microcontroller
+struggling to cope.  Despite being more complex, my design is nonetheless
+very cheap and only uses easily obtainable parts; two aspects in keeping
+with the fundamental tenets of all electronics hobbyists.  I call the design
+a MIPI (for Machine Independent Parallel Interface).
+
+
+Implementation
+==============
+
+So, since the microcontroller has been ditched should we use a UART after
+all?  No, I decided to go for a slightly different approach which, although
+providing less I/O than could be obtained with a full UART, has the
+advantage that it does not require any specialised chips at all - the design
+only uses common or garden CMOS.  (A word or two of warning is in order: the
+design uses monostables - I know that some design engineers regard
+monostables with the same distaste as software engineers reserve for GOTO
+statements.)
+
+The basis of the design is the observation that a single bit asynchronous
+protocol would be really easy to decode.  Such a protocol would involve
+sandwiching the data bit between a start bit and a stop bit; in comms
+program terms this is a 1-data, No parity, 1-stop bit (1N1) protocol.  To
+decode this we can use the start bit to fire a monostable that times out
+1-1/2 bit-periods later; that is just in time to sample the data bit in the
+middle of its cell.  To illustrate this here's a simple timing diagram:
+
+                            START     DATA      STOP
+                            BIT       BIT       BIT
+                  ------+         +---------+---------+
+    ASYNCH STREAM       |         | 0 or 1  |         |
+                        +---------+---------+         +-----
+
+                  ------+              +--------------------
+    MONOSTABLE O/P      |              |
+                        +--------------+
+
+
+All very good, but more than one bit would be nice.  It turns out that three
+packets like the one above can be encapsulated in the more common 8N1
+format.  In this mode the monostable fires three times per 8-bit character.
+A simple counter can keep track of which packet is which and each data bit
+fed to one of three latches to provide a parallel output.  Well, it's
+nearly, but not quite, that simple.  A small catch is that the counter must
+be initialised correctly.  It's not obvious how to do this as all the
+packets look the same.  That's a clue.  One of the packets can be made to
+look different from the rest and this event used to generate a counter
+reset.  This idea is implemented by using the start bit to fire another
+monostable that times out in the middle of the stop bit cell; a packet with
+a zero stop bit (i.e. a protocol violation) resets the counter.  (In playing
+with the finished unit I found that this is a very powerful technique and,
+with care, selectively including protocol violations can make the interface
+perform some useful tricks, but that's another story; such things are
+entirely in the hands of the programmer).  The periods of the monostables
+must be set to agree with the baud rate of the link.  If the baud rate is
+changed the periods can be altered accordingly by changing two resistors.
+
+So much for output, how about input?  This is done by simply copying the
+character received from the PC back to the PC but slightly modified.  This
+technique guarantees that character timing is OK.  The copy back can be
+performed by a multiplexer: only the start bit and the most significant bit
+(MSB) of the transmitted character are copied back unchanged, the middle of
+the character is constructed by jamming on the instantaneous values of each
+of four input lines in turn.  In the final implementation each input line
+appears for 1-1/2 bit cells and this means that data transitions can happen
+where they are not normally found but this is of no consequence in practice.
+
+To keep things simple, the three outputs are latched when they arrive and no
+attempt at synchronising them has been made (it's a moot point whether this
+would be a good idea or counterproductive); also no input latches are
+provided (again this may or may not be a good thing).  For ease of
+interfacing to external circuitry a +5V power supply is used and the RS232
+signals (up to +/-15V) must be converted to compatible levels.  The most
+platform independent way to do this is to use something like a MAX232 chip
+to guarantee RS232 conformant signals from a single +5V supply.  For the
+more adventurous the whole circuit can be powered from the RS232 signals
+themselves.  This should work on most machines that provide DTR and/or RTS;
+note that it's not necessary to program these lines as they normally idle at
+between +8V to +12V and should be able to supply the small current required
+for the circuit.  My prototype uses this approach: it has a two transistor
+voltage regulator (used because it has a lower dropout voltage than a
+78L05 for example); a single transistor RS232 receiver and uses an op-amp as
+an RS232 transmitter.  The TXD line is rectified and smoothed to provide the
+negative supply for the op-amp; the positive supply is taken from DTR/RTS.
+
+The following sections give full details of the implementation (for
+completeness I have included both the circuit of a MAX232 based RS232
+interface using a conventional +5V regulator and the design I actually used
+in my prototype).  If you decide to build it directly from the schematic,
+remember to add decoupling capacitors (one 100nF capacitor per couple of
+chips is fine, but make sure the monostable in particular is well
+decoupled).  The MIPI should look like a modem to the PC and therefore the
+most convenient connector to use is a standard 25-way D female as is
+normally fitted to modems.  I find it convenient to strap the modem
+signals inside the interface so that I can use a standard modem cable.
+
+Potential constructors should note:
+
+THIS INFORMATION IS PROVIDED AS IS AND WITHOUT WARRANTY OF ANY KIND,
+EITHER EXPRESSED OR IMPLIED.
+
+
+Block diagram
+=============
+
+The diagram shows a system that implements the ideas described in the
+previous section.
+
+                            +---------------------------+
+                            |                           |
+          +----------+      |    +--------+         +--------+
+   TXD    |  RS232   | SIN  |    |  MONO  | /M2     | RESET  | RST
+    >-----|   I/F    |------+----|  1/2   |---------| 1/2    |-------+
+          |          |      |    |  4098  |         | 4013   |       |
+   RXD    |  MAX232  | SOUT |    +--------+         +--------+       |
+    <-----|    OR    |--+   |                                        |
+          | DISCRETE |  |   |    +--------+         +-----------+    |
+          +----------+  |   |    |  MONO  | /M1     | CLOCK GEN |    |
+                        |   +----|  1/2   |---+-----|           |----+
+ DTR/RTS  +----------+  |   |    |  4098  |   |     |   4027    |
+    >-----|  POWER   |  |   |    +--------+   |     +-----------+
+          | 78L05 OR |  |   |                 |       |   |   |
+    >-----| DISCRETE |  |   |   +-------------+  CLK2 |   |   |CLK0
+   VIN    +----------+  |   |   |  +------------------+   |   |
+               |        |   |   |  |  +---------------|---+   |
+               | VDD    |   +---|--|--|-------+  CLK1 |   |   |
+               +-->     |   |   |  |  |       |       |   |   |
+                      +-----------------+     |     +------------+
+            DIN0 >----|    INPUT MUX    |     |     | DATA LATCH |---> DOUT0
+            DIN1 >----|                 |     +-----|   1-1/2    |---> DOUT1
+            DIN2 >----|      4512       |           |   4013     |---> DOUT2
+            DIN3 >----|                 |           +------------+
+                      +-----------------+
+
+
+            Parts: 4098 (or 4528), 4027, 2 X 4013, 4512, 3 X VN10KM.
+            Also:  MAX232, 78L05; or 2 X BC547, BC550, TL071.
+
+
+Timing diagram
+==============
+
+The timing of the principal signals are shown here.  A protocol violation
+has been included in the final packet to generate a counter reset.  I use
+this format for most transmissions but after the first reset has been
+generated it is redundant for all subsequent characters.  Note that DOUT0 is
+latched on the negative edge of CLK1, and DOUT1 and DOUT2 are latched on the
+positive edges of CLK1 and CLK2 respectively.  The /X notation means NOT X.
+
+
+        <---------------------  one character  -------------------->
+
+
+ 8N1    |     |     |     |     |     |     |     |     |     |     |
+ CELL   |START| D0  | D1  | D2  | D3  | D4  | D5  | D6  | D7  |STOP |
+ NAMES  |     |     |     |     |     |     |     |     |     |     |
+
+   -----+     +-----+-----+     +-----+-----+     +-----+     +-----+
+ SIN    |     |DOUT0|     |     |DOUT1|     |     |DOUT2|     |     |
+        +-----+-----+     +-----+-----+     +-----+-----+-----+     +-----
+
+   -----+        +--------+        +--------+        +--------------+
+ /M1    |        |        |        |        |        |              |
+        +--------+        +--------+        +--------+              +-----
+
+  ---------------+                 +--------------------------------------
+ CLK1            |                 |
+ CLK0 = /CLK1    +-----------------+
+
+  ---------------------------------+                 +--------------------
+ CLK2                              |                 |
+                                   +-----------------+
+
+   -----+     +--+--------+--------+--------+--------+--+     +-----+
+ SOUT   |     |//|  DIN0  |  DIN1  |  DIN2  |  DIN3  |//|     |     |
+        +-----+--+--------+--------+--------+--------+--+-----+     +-----
+
+  ------+              +--+              +--+              +--------+
+ /M2    |              |  |              |  |              |        |
+        +--------------+  +--------------+  +--------------+        +-----
+
+                                                           +--+
+ RST                                                       |  |
+  ---------------------------------------------------------+  +-----------
+
+
+Full schematic
+==============
+
+RS232 Interface and PSU.  Option 1: MAX232 and 78L05.
+-----------------------------------------------------
+
+     +------------+------------+----* VDD       +----------------------< VIN
+     |            |            |               _|_  1N4001             (>9V)
+  +__|__          |          __|__             \ /
+   _____          |          _____             ---   +---------+
+ 22u |     +--------------+ +  | 22u            |    |         |       VDD
+    ///    |     VCC      |    |                +----|  78L05  |---+---->
+           |           +V |----+                |    |         |   |   +5V
+     +-----| +C1       -V |----+                |    +---------+   |
+  +__|__   |              |  __|__           +__|__       |      __|__
+   _____   |              |  _____       47u  _____       |      _____ 100n
+ 22u |     |              | +  | 22u            |         |        |
+     +-----| -C1          |   ///               |         |        |
+     +-----| +C2          |                    ///       ///      ///
+  +__|__   |              |
+   _____   |    MAX232    |
+ 22u |     |              |                        +----> DSR
+     +-----| -C2          |                        |
+           |              |                        +----< DTR
+ TXD >-----| R1IN   R1OUT |------> SIN
+ RXD <-----| T1OUT   T1IN |------< SOUT            +----< CTS
+ GND >--+  |     GND      |                        |
+        |  +--------------+                        +----> RTS
+        |         |                                |
+        |         |                                +----> DCD
+       ///       ///
+
+            
+RS232 Interface and PSU.  Option 2: Discrete, RS232 powered.
+------------------------------------------------------------
+
+                                                           +----> DSR
+                                             2 X 1N4148    |
+                                             +-------------+----< DTR
+       +-----------------+-------------+     |      +------+----< CTS
+       |                 |C            |    _|_    _|_     |
+       |    _____      |/              |    \ /    \ /     +----> RTS
+       +---[_____]--+--|   BC550       |    ---    ---     |
+       |     10k    |  |\              |     |      |      +----> DCD
+       |            |    |E            +-----+------+-----------> V++
+    +__|__          |    +----+---------------------+-----------> VDD
+     _____    +-----+         |    _____            |             +5V
+  220u |      |     |         +---[_____]---+       |
+       |      |    C|               22k     |    +__|__
+       |    __|__    \|  BC547              |     _____
+      ///   _____     |---------------------+   47u |
+         100n |      /|                     |       |
+              |    E|              _____    |       |
+              |    _|_        +---[_____]---+      ///
+             ///   \ /^       |     18k
+                   ---        |
+       LO-I RED LED |         |
+                    |         |
+                   ///       ///
+
+                                       _____
+                                  +---[_____]---* VDD
+                                  |     22k
+                                  +------------->
+                                  |C           SIN
+               _____            |/
+ TXD >----+---[_____]-----+-----|   BC547
+          |     22k       |     |\
+          |               |       |E                           V++
+         ---             ---      |       VDD   _____           *
+         /_\ 2 X 1N4148  /_\      |        *---[_____]--+       |
+          |               |       |              270k   |  | \  |
+          |   V--         |       |             _____   |  |   \|
+          +---->         ///     ///   +-------[_____]--+--|+    \       RXD
+          |                            |         220k      |TL071 >------>
+        __|__                          |                +--|-    /    +-->
+        _____                          |                |  |   /|     |  GND
+       +  | 100u                      ///               |  | /  |    ///
+          |                                     _____   |       |
+         ///                     >-------------[_____]--+       *
+                                SOUT             100k          V--
+
+
+Timing Recovery
+---------------                         _____
+                            +------+---|_____|----* VDD
+                            |    __|__      100k
+                            |    _____ 2n2
+                            |      |       Tmono = 156 us for 9600bps.
+                     +-----------------+   (Reduce R for higher rates).
+                     |  1/2 4098/4528  |
+     SIN >-----------|-TR (B)        Q |-------> M1
+      M2 >-----------|+TR (A)       /Q |-------> /M1
+                     |       /RES      |
+                     +-----------------+
+                              |
+                              |
+                              * VDD
+
+                                        _____
+                            +------+---|_____|----* VDD
+                            |    __|__     100k
+                            |    _____ 3n9
+                            |      |       Tmono = 260 us for 9600bps.
+                     +-----------------+   (Reduce R for higher rates).
+                     |  1/2 4098/4528  |
+     SIN >-----------|-TR (B)        Q |-------> M2
+      M2 >-----------|+TR (A)       /Q |-------> /M2
+                     |       /RES      |
+                     +-----------------+
+                              |
+                              |
+                              * VDD
+
+
+Output Latches and Reset Circuit
+--------------------------------
+
+     SIN >--------+
+                  |
+          +-------+                                     \\\
+          |       |                                      |
+          |  +---------+                            +---------+
+          |  |   SET   |                            |   SET   |
+          +--| D     Q |-----> /RST      SIN >------| D     Q |-----> DOUT0
+     /M2 >---| CK      |                CLK0 >------| CK      |
+             |      /Q |-----> RST                  |      /Q |-----> /DOUT0
+             |   RES   |                            |   RES   |
+             +---------+                            +---------+
+                  |                                      |
+                 ///                                    ///
+                                2 X 4013
+         +--------+                                     \\\
+         |        |                                      |
+         |   +---------+                            +---------+
+         |   |   SET   |                            |   SET   |
+  SIN >--|---| D     Q |-----> DOUT1     SIN >------| D     Q |-----> DOUT2
+ CLK1 >--|---| CK      |                CLK2 >------| CK      |
+         |   |      /Q |-----> /DOUT1               |      /Q |-----> /DOUT2
+         |   |   RES   |                            |   RES   |
+         |   +---------+                            +---------+
+         |        |                                      |
+    JP1  O        O JP2                                 ///
+        /          \        Jumpers to set/reset
+       O   O-+--O   O       DOUT1 at the end of
+       |     |      |       a character.  (Useful
+      ///    |     ///      for SPI/I2C clock.)
+             |              Normally strapped as
+  RST >------+              shown here.
+
+
+                                   +--------> /DOUT0*
+                                   |D           e.g.
+                    _____     | |--+
+      DOUT0 >------[_____]----|       VN10KM    Open drain stages; one
+       e.g.          47k      | |<-+            per output. (Useful for
+                                   |S           SPI/I2C data and clock.)
+                                   |
+                                  ///
+
+      For maximum flexibility all outputs (inverted, non-inverted and
+      open drain) should be available for connection.
+
+
+Clock Generator
+---------------
+
+ RST >------------+-----------------------------------+
+                  |                                   |
+    VDD *         |                     VDD *         |
+        |    +---------+                    |    +---------+
+        |    |   SET   |                    |    |   SET   |
+        +----| J     Q |------> CLK1        +----| J     Q |-----+---> CLK2
+   M1 >------| CK      |               M1 >------| CK      |     |
+        +----| K    /Q |-+-----------------------| K    /Q |     |
+        |    |   RES   | |                       |   RES   |     |
+        |    +---------+ +----> CLK0             +---------+     |
+        |         |                                   |          |
+        |        ///             4027                ///         |
+        |                                                        |
+        +--------------------------------------------------------+
+
+
+Input Multiplexer
+-----------------
+
+    CLK2 >--------------------------+
+    CLK1 >---------------------+    |
+     /M1 >----------------+    |    |
+                          |    |    |
+                +-------------------------------+
+                |         A    B    C           |
+         +------| /OE                         Z |--------> SOUT
+         |      |             4512              |
+         +------| INH                           |
+         |      |     X0 X1 X2 X3 X4 X5 X6 X7   |
+         |      +-------------------------------+
+        ///            |  |  |  |  |  |  |  |
+                       |  |  |  |  |  |  |  |
+                  *----+--+  |  |  |  |  +--+----< SIN
+                 VDD         |  |  |  +-----------------< DIN1
+                             |  |  +--|-----------------< DIN0
+                             |  +--|--|-----------------< DIN3
+                             +--|--|--|-----------------< DIN2
+                             |  |  |  |   _____
+                             |  |  |  +--[_____]--+
+                             |  |  |      _____   |
+                             |  |  +-----[_____]--+
+                             |  |         _____   |
+                             |  +--------[_____]--+
+                             |            _____   |
+                             +-----------[_____]--+
+                                                  |
+                                        4 X 330k  |
+                                                 ///
+
+
+Pinouts
+-------
+
+Note: ALL (including 78L05 and transistors) viewed from above.
+
+
+                MAX232                   _____               TL071
+            +----+ +----+        78L05  /     \          +----+ +----+
+        +C1 |1   +-+  16| VCC          | 2 3 1 |         |1   +-+   8| 
+         +V |2        15| GND          +-------+       - |2         7| V++
+        -C1 |3        14| T1OUT         1 - VIN        + |3         6| O/P
+        +C2 |4        13| R1IN          2 - +5V      V-- |4         5|
+        -C2 |5        12| R1OUT         3 - GND          +-----------+
+         -V |6        11| T1IN    
+      T2OUT |7        10| T2IN         BC547/550             VN10KM
+       R2IN |8         9| R2OUT          _____                _____
+            +-----------+               /     \              /     \
+                                       | C B E |            | S G D |
+                                       +-------+            +-------+
+
+              4098/4528                      4013
+            +----+ +----+                +----+ +----+  
+         CX |1   +-+  16| VDD          Q |1   +-+  14| VDD
+      CX/RX |2    |   15| CX          /Q |2    |   13| Q
+       /RES |3    |   14| CX/RX      CLK |3    |   12| /Q
+        +TR |4  1 | 2 13| /RES       RES |4  1 | 2 11| CLK
+        -TR |5    |   12| +TR          D |5    |   10| RES
+          Q |6    |   11| -TR        SET |6    |    9| D
+         /Q |7    |   10| Q          VSS |7    |    8| SET
+        VSS |8    |    9| /Q             +-----------+
+            +-----------+
+            
+               
+                4027                          4512
+            +----+ +----+                +----+ +----+  
+          Q |1   +-+  16| VDD         X0 |1   +-+  16| VDD
+         /Q |2    |   15| Q           X1 |2        15| /OE
+        CLK |3    |   14| /Q          X2 |3        14| Z
+        RES |4  1 | 2 13| CLK         X3 |4        13| C
+          K |5    |   12| RES         X4 |5        12| B
+          J |6    |   11| K           X5 |6        11| A
+        SET |7    |   10| J           X6 |7        10| INH
+        VSS |8    |    9| SET        VSS |8         9| X7
+            +-----------+                +-----------+
+            
+
+Programming the MIPI
+====================
+
+Machine Dependent Routines
+--------------------------
+
+To ensure that software written for the MIPI is portable, the machine
+dependencies are hidden away in four routines.  These must be supplied
+for each machine, but once they are written all software written for
+the MIPI should then run on that machine.  The routines that form the
+MIPI library are specified in C (this is because C is itself reasonably
+portable and is the language most likely to be available on all platforms;
+or for no better reason than I program in C).  The four machine dependent
+routines are mipi_baud(), mipi_out(), mipi_in() and mipi_init().  Each is
+described below together with examples of (pretty dumb) implementations on
+an IBM PC clone (Turbo C) and a Sun Workstation (gcc). (The Sun versions
+might work unchanged on any Unix machine that uses the termios structure.)
+
+long mipi_baud()
+
+This returns the baud rate of the link.  Knowing this value means that
+timing can be made machine independent.  On an IBM PC the baud rate can be
+up to 115,200 and that's one reason why a long is returned (115,200 exceeds
+the range of a 16-bit integer).
+
+void mipi_out(char  c)
+
+This is usually just another name for the machine routine to transmit a
+character.  It is probably unwise to call this routine on its own in a
+user program.
+
+int mipi_in()
+
+This is usually just another name for the machine routine to receive a
+character.  Again, it is probably undesirable to call this routine on its
+own in a user program.
+
+int mipi_init()
+
+This does whatever is necessary to initialise the serial I/O system.  It
+should ensure that the output and input characters are synchronised.
+Remember that one character is returned for every character sent and, though
+not essential for every application, the next character to be received
+should be the one generated by the current output character.  It might be
+necessary to flush buffers and suchlike to ensure that the character you get
+is the character you want.  To facilitate the synchronisation process it is
+possible to toggle the MSB of the character sent.  Sending either 0 or 0x80
+will reset the MIPI and if all is well the MSB should be returned as sent.
+The routine returns 0 for success and -1 for failure.
+
+
+PC Implementation
+-----------------
+
+This is for a MIPI on COM1 running at 9600 baud.
+
+#include <bios.h>
+#include <dos.h>
+
+long mipi_baud()
+{
+   return 9600L;
+}
+
+int mipi_in()
+{
+   return bioscom(2, 0, 0)&0xFF;
+}
+
+void mipi_out(char  c)
+{
+   bioscom(1, c, 0);
+}
+
+int mipi_init()
+{
+   bioscom(0, 0xE3, 0);   /* 0xE3 is the magic number for 9600, 8N1 */
+   mipi_in();             /* grab pending input */
+   mipi_out(0);           /* send a NULL to ensure MIPI reset */
+   mipi_in();             /* swallow corresponding input */
+   return 0;              /* assume success */
+}
+
+
+Sun Implementation
+------------------
+
+This is for a MIPI on /dev/ttya running at 9600 baud.  This version might
+work unchanged on any Unix machine that uses the termios structure.  It
+works with Linux for example.
+
+#include <fcntl.h>
+#include <sys/termios.h>
+
+static int ttyfd;
+
+long mipi_baud()
+{
+   return 9600L;
+}
+
+int mipi_in()
+{
+   char c;
+
+   read(ttyfd, &c, 1);
+   return c;
+}
+
+void mipi_out(char c)
+{
+   write(ttyfd, &c, 1);
+}
+
+int mipi_init()
+{
+   struct termios myterm;
+
+   if ( (ttyfd = open("/dev/ttya", O_RDWR )) < 0 )
+     return -1;
+
+   ioctl(ttyfd, TCGETS, &myterm);
+   myterm.c_iflag= 0L;
+   myterm.c_oflag= 0L;
+   myterm.c_cflag= B9600 | CS8 | CREAD;
+   myterm.c_lflag= 0L;
+   ioctl(ttyfd, TCSETS, &myterm);
+
+   mipi_out(0);                  /* reset MIPI */
+   mipi_in();
+   return 0;                     /* assume success */
+}
+
+
+Machine Independent Routines
+----------------------------
+
+The MIPI library is completed by two routines that are the same on any
+platform.  These are mipi_io() and mipi_delay().
+
+int mipi_io(int w)
+
+This is a combined input and output function which sends a character and
+receives the character that the MIPI generates in response.  The argument is
+the binary word formed by DOUT2, DOUT1 and DOUT0 with DOUT2 the MSB.  The
+return value is the binary word constructed from DIN3, DIN2, DIN1 and DIN0
+with DIN3 the MSB.  The routine assembles the three packets such that the
+last has a zero stop bit; this will generate a counter reset (in the rare
+cases where this is undesirable it is necessary to call mipi_out()
+directly).  If the argument is -1 the character that was sent by the last
+call to mipi_io() is sent again; this is the normal method used to sample
+the data lines without changing the MIPI output bits.  (Note, if the MIPI
+hardware has jumpers JP1 or JP2 strapped to set/reset DOUT1, unexpected
+transitions can happen if mipi_io(-1) is called).
+
+void mipi_delay(int msecs)
+
+This routine does not return for at least "msecs" milliseconds.  The
+routine simply makes as many calls to mipi_io(-1) as are needed to
+guarantee the correct delay.  Note the argument is only a lower bound
+on the real delay (on a multi-tasking machine the delay might be
+much longer).  Because mipi_io(-1) is used the same caveats about
+DOUT1 apply.
+
+Implementation
+--------------
+
+int mipi_io(int w)
+{
+   static char c = 0x12;        /* two non-zero stop bits */
+
+   if ( w >= 0 )
+       c = 0x12 | (w&1) | ((w&2)<<2) | ((w&4)<<4);
+   mipi_out(c);
+   w = mipi_in();
+   return ((w&6)>>1) | ((w&0x30)>>2);
+}
+
+
+void mipi_delay(int msecs)
+{
+    long i, n;
+
+    n = (msecs*mipi_baud())/10000 + 1;
+    for (i=0; i<n; ++i)
+       mipi_io(-1);
+}
+
+
+The MIPI library prototypes are brought together in a header file
+called mipi.h:
+
+#ifndef _MIPI_H_
+#define _MIPI_H_
+long mipi_baud();
+int mipi_in();
+void mipi_out(char c);
+int mipi_init();
+int mipi_io(int w);
+void mipi_delay(int msecs);
+#endif
+
+
+MIPI says "Hello, World"
+========================
+
+Well, perhaps not quite that.  I wrote a "walking LED" routine to exercise
+the MIPI and this must about the closest thing there is to a "Hello, World"
+program for hardware like this.  The program also performs a loopback test
+to check both input and output ports.  To use the program a few LEDs and
+resistors must be attached to the MIPI.  If the unit is powered from the
+RS232 interface and you use its power for the LED supply make sure the
+resistors have fairly large values.  I used some high brightness low current
+0.3mm red LEDs (as specified in the RS232 PSU schematic) and I was surprised
+how bright they were with 10k series resistors.  You can use an external
+power supply and reduce the resistor values to 1k or less for an even
+brighter display.  To be clear about what's needed here's a diagram:
+
+
+                                  3 X 10k 
+                                   _____
+                   +--------------[_____]-------+-----------* VDD
+                   |               _____        |
+                   |     +--------[_____]-------+
+                   |     |         _____        |    ----
+                   |     |     +--[_____]-------+----O  O---> DIN3    
+    3 X LO-I LED   |     |     |                   
+                  _|_   _|_   _|_                 Press to terminate
+                  \ /^  \ /^  \ /^           
+ /DOUT0* >----+   ---   ---   ---   +----< /DOUT2* 
+              |    |     |     |    |
+   DIN0  <----+----+     |     +----+----> DIN2
+                         |               
+               DIN1 <----+----< /DOUT1*
+
+
+
+Touching DIN3 to VDD (and keeping it connected until it is sampled)
+will terminate the program.  The program runs unchanged on an IBM clone
+running either MS-DOS or Linux and also on a Sun.  The full source is
+included here:
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "mipi.h"
+
+
+int next()               /* compute next LED to illuminate */
+{
+   int w;
+   static int dir=1, n=0;
+
+   w = mipi_io(1<<n);
+   if ( (n += dir) > 2 ) {
+       n = 1;
+       dir = -1;
+   }
+   if ( n < 0 ) {
+       n = 1;
+       dir = +1;
+   }
+   return w;             /* return input bits */
+}
+
+void walk()
+{
+   int w;
+
+   while ( (w = next()) < 8 )     /* DIN3 high? */
+      mipi_delay(300);            /* wait 300ms */
+   mipi_io(0);                    /* all outputs low */
+}
+
+int testloop()
+{
+    int i, w;
+
+    for ( i=0; i<8; ++i ) {
+       mipi_io(i);                /* send pattern */
+       w = (~mipi_io(-1))&0x7;    /* and again */
+       if ( w != i )              /* return non-zero for disagreement */
+	  return (i<<3) | w;
+    }
+    return 0;
+}
+
+void main()
+{
+   if ( mipi_init() < 0 ) {
+      fprintf(stderr,"Can't initialise MIPI\n");
+      exit(1);
+   }
+
+   if ( testloop() ) {
+      fprintf(stderr,"MIPI failed loopback test\n");
+      exit(1);
+   }
+
+   walk();
+}
+
+
+MIPI Application
+================
+
+If you already have a PC with a parallel interface then perhaps the main use
+is simply to free up the printer port when playing with undemanding projects.
+To me the main attraction is it's machine independence.  What motivated this
+project in the first place was the challenge of building a machine
+independent programmer for the PIC16C84 microcontroller.  This (at present)
+is the only EEPROM-based member of the Microchip PIC family and its
+programming algorithm requires only a few wires and is very tolerant of
+sloppy timing.  In short an ideal task for the MIPI.  To cope with the
+fact that the MIPI only has three outputs I designed a simple programmer
+to be used with it.  The full circuit is shown here:
+ 
+ 
+ VIN      +-------+           
+ >17V     |       |                                        _____
+  >--+----| 78L12 |----+-----+----+------------------+  +-[_____]--+ 
+     |    |       |    |     |    |                  |  |   2k2    |
+  +__|__  +-------+  __|__   |    |   _____          |  |         _|_
+   _____      |      _____   |    +--[_____]--+      |  |         \ /^ RED
+ 47u |       _|_  470n |     |         10k    |      |E |         ---  LED
+     |       \ /^      |     |        _____   |    |/   |          |
+    ///      ---      ///    |    +--[_____]--+----|    |          |     
+        GREEN |              |    |    10k         |\   |         ///     
+         LED  |              |    |          BC560   |C |  _____        
+             ///             |    +------------+     +--+-[_____]--+     
+                             |    |            |            100    |     
+                             |    |           ---                 _|_    
+/DOUT2* >-------------------------+    1N4148 /_\          1N4148 \ /     
+                        RB6  |                 |                  ---    
+/DOUT0* >----+----------->   |        _____    |           _____   |
+             |               +-------[_____]---+       +--[_____]--+---->
+/DOUT1* >--+------------->             22k     |       |    10k    |  MCLR
+           | |   _____  RB7                    |      ///          |C
+           | +--[_____]--+------->             |                 |/
+           |     _____   |    TARGET VDD       +-----------------|   BC550
+   DIN0 <--+----[_____]--+                     |C                |\
+                2 X 10k             _____    |/                    |E
+ /DOUT0 >--------------------------[_____]---|   BC550             |
+                                     10k     |\                    |
+                                               |E    BC560 PNP     |
+TO/FROM MIPI                                   |     BC550 NPN     |
+                                              ///                 ///
+
+
+The signals /DOUT0*-/DOUT2* are open drain outputs but /DOUT0 comes directly
+from the data latch.  The signals are decoded to give 13V, 0V or "not
+driven" on MCLR.  For this circuit to work for in-circuit programming the
+target PIC board should tie MCLR to the target VDD via a diode and a 1k
+resistor.  Also the loads normally attached to RB6 and RB7 must be fairly
+light so that they can be driven by open drain outputs with 10k pullups.
+The software used to control this programmer was derived from my own
+parallel port programmer software (available on the Microchip BBS and
+the circuit cookbook FTP site - ftp.ee.ualberta.ca).  The modifications to
+use the MIPI instead of a true parallel port were very small indeed.
+
+
+[To be completed ...  In particular I am in the process of redefining the
+MIPI library to allow multi-tasking machines (Unix based for example) to 
+use buffered I/O.  This is because the character at a time technique I use
+seems to be very inefficient on such machines.]

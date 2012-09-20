@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="53"
+   name=""
+   committed-date="2007-01-23T17:40:50.816389Z"
+   url="svn://192.192.0.1/mcuprog/include"
+   last-author="root"
+   kind="dir"
+   uuid="8553746f-c726-0410-a30b-8dccbf3416dc"
+   repos="svn://192.192.0.1"
+   revision="53"/>
+<entry
+   committed-rev="53"
+   name="comm.h"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="da7d26138324a3c542a8f038f704df40"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="mcutarget.h"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="4359569ea394b68de4425ef9a081a7c0"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="commport.h"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="9fb4ba1a2352bb530e97b2bfaa21959e"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="mcuburnconfig.h"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="bcffff86e862c6a6ff6b28dee66a38a6"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="proto.h"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="708281e2650342996cd33a94999ecee2"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="heximage.h"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="1e205466219c73db1610bd84f9e97979"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+</wc-entries>

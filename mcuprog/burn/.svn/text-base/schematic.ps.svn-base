@@ -1,0 +1,495 @@
+%!
+
+/inch { 72 mul } def
+
+/triUp
+{
+  currentpoint
+    -5 0 rmoveto 10 0 rlineto -5 5 rlineto closepath stroke
+  5.5 add moveto
+} def 
+
+/centershow
+{ dup stringwidth pop -0.5 mul 0 rmoveto show } def
+
+/centercenter
+{
+  gsave
+    currentpoint newpath translate 0 0 moveto
+    dup false charpath pathbbox
+    % str llx lly urx ury
+    3 -1 roll add -0.5 mul
+    % str llx urx midy
+    3 1 roll add -0.5 mul
+    % str midy midx
+    exch moveto show
+  grestore
+} def
+
+/llap
+{ dup stringwidth pop neg 0 rmoveto show } def
+
+/leftcenter
+{
+  gsave
+    currentpoint newpath translate 0 0 moveto
+    dup false charpath pathbbox
+    % str llx lly urx ury
+    3 -1 roll add -0.5 mul
+    % str llx urx midy
+    exch neg exch moveto pop show
+  grestore
+} def
+
+/rightcenter
+{
+  gsave
+    currentpoint newpath translate 0 0 moveto
+    dup false charpath pathbbox
+    % str llx lly urx ury
+    3 -1 roll add -0.5 mul
+    % str llx urx midy
+    0 exch moveto pop pop show
+  grestore
+} def
+
+/Vdd	{ triUp 0 1 rmoveto (+5) centershow } def
+/Vpp	{ triUp triUp 0 1 rmoveto (+13) centershow } def
+
+/Vss
+{
+  0 -2 rlineto
+  -5  0 rmoveto 10 0 rlineto 
+  -8 -2 rmoveto 6 0 rlineto
+  -4 -2 rmoveto 2 0 rlineto
+  stroke
+} def
+
+% draws a resistor extending to the right of currentpoint
+/resist % length-in-points ---
+{
+  dup 5 div ceiling cvi dup 0 eq { 1 add } if % calculate nr of points 
+  % length npoints
+  dup 3 1 roll div
+  % npoints length-per-point
+  false 3 -1 roll
+  % length-per-point false npoints
+  {
+    % length-per-point flag
+    1 index 2 div dup 3 -1 roll
+    % length-per-point half-length half-length flag
+    { -3 rlineto  3 rlineto false }
+    {  3 rlineto -3 rlineto true  }
+    ifelse
+  }
+  repeat
+  pop pop 
+} def
+
+/hresist % (label) ---
+{
+  gsave
+    22.5 4 rmoveto centershow
+  grestore
+  45 resist
+} def
+
+/pullup
+{
+  [0 1 1 0 0 0] concat
+  3 0 rlineto 35 resist 7 0 rlineto 
+  [0 1 1 0 0 0] concat
+} def
+
+/diode % advances 5.5 points to the right
+{
+  currentpoint
+  stroke
+    2 copy moveto -5 0 rmoveto 10 0 rlineto -5 5 rlineto fill
+  5.5 add 2 copy moveto -5 0 rmoveto 10 0 rlineto moveto
+} def
+
+/LED
+{
+  gsave
+    0 4 rmoveto
+    currentpoint
+    3 5 rmoveto LEDarrow
+    2 -2 rmoveto LEDarrow
+    8.5 0 360 newpath arc stroke
+  grestore
+  diode
+} def
+
+/LEDarrow
+{
+  gsave
+    currentpoint translate newpath 
+    0 0 moveto
+    2 5 4 2 6 6 curveto
+    4 1 2 4 0 0 curveto
+    closepath
+    6.9 dup moveto
+    -1.7 -1.2 rlineto 6.1 4.9 lineto closepath
+    fill
+  grestore
+} def
+
+/dropLED
+{
+  0 5 rlineto
+  0 5.5 rmoveto
+  currentpoint
+    [1 0 0 -1 0 0] concat
+    LED
+    [1 0 0 -1 0 0] concat
+  moveto
+  0 5 rlineto
+} def
+
+/pinwidth 5 def
+
+/chip % name npins ---
+{
+  gsave
+    % width is ((npins/2)+1)*(2*pinwidth)
+    dup pinwidth mul
+    % name npins length-2pinwidth
+    dup -10 rmoveto 
+    dup pinwidth add 
+    % name npins length-2pinwidth length
+    dup neg 0 rlineto
+    0 5 rlineto
+    currentpoint 5 add 5 270 90 arc
+    0 5 rlineto
+    0 rlineto
+    % name npins length-2pinwidth
+    closepath
+    stroke
+  grestore
+  % name npins length-2pinwidth
+  gsave 2 div pinwidth -0.5 mul add 0 rmoveto exch centercenter grestore
+  % npins 
+  gsave
+    1 2 3 -1 roll 
+    {
+      0 -10 rmoveto
+      0 -2 rlineto
+      pinwidth 0 rlineto
+      0 2 rlineto
+      0 20 rmoveto
+      0 2 rlineto
+      pinwidth neg 0 rlineto
+      0 -2 rlineto
+      pinwidth dup add -10 rmoveto
+    } for
+    stroke
+  grestore
+} def
+
+/lfrom % label ---
+{
+  leftcenter
+  2 4 rmoveto
+  2 -4 rlineto
+  -2 -4 rmoveto
+  2 4 rlineto
+} def
+
+/rto % label ---
+{
+  -2 4 rlineto
+  2 -4 rmoveto
+  -2 -4 rlineto
+  6 4 rmoveto
+  rightcenter
+} def
+
+/bubble 
+{
+  currentpoint stroke exch 2 copy 2.5 add exch 2.5 0 360 arc closepath
+  5 add exch moveto
+} def
+
+/buffer 
+{
+   13 0 rmoveto
+   -13 -8 rlineto
+   0 16 rlineto
+   13 -8 rlineto
+} def
+
+/join
+{
+  currentpoint 2 copy stroke 2 0 360 arc fill moveto
+} def
+
+% puts a switchbox. control is at currentopoint; 
+% one terminal is at (+9,-11) and the other is at (+9,+11).
+/switchbox
+{
+  gsave
+    currentpoint newpath translate
+    9 7 2 0 360 arc fill
+    9 -7 2 0 360 arc fill
+    9 11 moveto
+    9 7 lineto 3 -7 lineto
+    9 -7 moveto
+    9 -11 lineto
+    0 -11 moveto 14 -11 lineto 14 11 lineto 0 11 lineto closepath
+    stroke
+  grestore
+} def
+
+/db25ang 1 2 atan def
+/db25
+{
+  0 10 120 {  0 2.5 0 360 arc closepath stroke } for
+  5 10 115 { 10 2.5 0 360 arc closepath stroke } for
+
+
+  0 -7 moveto 120 -7 lineto
+   120 0 7 270 db25ang arc 115 10 7 db25ang 90 arc
+  5 17 lineto
+  5 10 7 90 180 db25ang sub arc 0 0 7 180 db25ang sub 270 arc
+  closepath stroke
+} def
+
+/labelfont
+  /Times-Roman findfont 24 scalefont
+def
+
+/Times-Roman findfont 12 scalefont setfont
+
+% draw the schematic diagram first
+gsave
+65 0 translate
+
+% draw clock & data coming in, going across the page, and out again
+50 140 moveto (D2) lfrom 20 0 rlineto buffer bubble 260 0 rlineto
+	buffer bubble 60 0 rlineto (ACK) rto
+50 160 moveto (D3) lfrom 20 0 rlineto buffer bubble 260 0 rlineto
+	buffer bubble 60 0 rlineto (SEL) rto
+
+% draw the indicator lights on the clock and data lines
+385 160 moveto join 0 30 rlineto pullup dropLED 0 18 rlineto Vdd
+410 140 moveto join 0 50 rlineto pullup dropLED 0 18 rlineto Vdd
+
+% draw all the pullups after all the incoming signals
+100 100 moveto join 0 90 rlineto pullup 7.5 0 rlineto 0 25 rlineto Vpp
+115 120 moveto join 0 70 rlineto pullup -7.5 0 rlineto join 
+130 140 moveto join 0 50 rlineto pullup 7.5 0 rlineto 0 30 rlineto Vdd
+145 160 moveto join 0 30 rlineto pullup -7.5 0 rlineto join
+
+% draw POWER coming in from parallel port
+50 120 moveto (D1) lfrom 20 0 rlineto buffer bubble 70 0 rlineto
+    0 150 rlineto 71 0 rlineto 
+    switchbox
+    gsave 9 11 rmoveto 0 15 rlineto Vdd grestore
+    9 -11 rmoveto 0 -27 rlineto
+    0 15 rmoveto join 70 0 rlineto 
+    gsave
+      0 -10 rlineto
+      [0 -1 1 0 0 0] concat
+      35 resist
+      10 0 rlineto
+      [0 1 1 0 0 0] concat
+      LED
+      [1 0 0 -1 0 0] concat
+      0 -100 rlineto Vss
+      stroke
+    grestore
+    join 20 0 rlineto 0 -10 rlineto
+    [0 -1 1 0 0 0] concat
+    35 resist
+    [0 1 -1 0 0 0] concat
+    0 -82 rlineto
+    -20 0 rlineto
+
+% draw MCLR coming in from parallel port
+50 100 moveto (D0) lfrom 20 0 rlineto buffer bubble 90 0 rlineto
+    switchbox
+    gsave 
+      9 -11 rmoveto 0 -10 rlineto 20 0 rlineto 0 5 rlineto Vpp 
+    grestore
+    9 11 rmoveto 0 67 rlineto 41 0 rlineto 0 30 rlineto
+191 120 moveto join 50 0 rlineto
+    35 resist 36 0 rlineto join    
+    -81 0 rmoveto join
+    0 -20 rlineto 10 0 rlineto 35 resist 16 0 rlineto
+    [0 1 1 0 0 0] concat
+    LED
+    [0 1 1 0 0 0] concat 
+    14.5 0 rlineto join 
+
+200 220 moveto (16C84) 18 chip
+242 210 moveto 0 -2 rmoveto 0 -6 rlineto Vss
+
+% connect clock & data to the chip
+177 140 moveto join 0 100 rlineto
+    75 0 rlineto 0 -8 rlineto 
+297 160 moveto join 0 80 rlineto
+    -35 0 rlineto 0 -8 rlineto
+
+% throw in the decoupling capacitor, just for kicks
+gsave
+  370 100 translate 
+  0 0 moveto Vdd
+  0 0 moveto 0 -10 rlineto 20 0 rlineto
+  20 -20 moveto 0 20 rlineto 5 0 rmoveto 0 -20 rlineto
+  0 10 rmoveto 20 0 rlineto 0 -10 rlineto Vss
+  stroke
+grestore
+
+% label it all
+labelfont setfont
+3 inch 0.7 inch moveto (b. Simple Programmer) centershow
+grestore
+
+0.5 inch 340 moveto 8 inch 340 lineto stroke
+
+% now draw the db25 connector
+gsave
+125 600 translate
+
+[0 -1 1 0 0 0] concat db25 [0 1 -1 0 0 0] concat
+
+/lnames
+[ (Strobe)
+  (D0) (D1) (D2) (D3) (D4) (D5) (D6) (D7)
+  (Ack) (Busy) (No Paper) (Select) ] def
+/rnames
+[ (Auto Feed) (Error) (Init) 
+  (GND) (GND) (GND) (GND) (GND) (GND) (GND) (GND) (GND) ] def
+
+/Times-Roman findfont 12 scalefont setfont
+0 1 12
+{
+  dup -10 mul -2.5 exch moveto -15 0 rlineto
+  dup -20 mul  65  add -35 exch lineto -7 0 rlineto -3 0 rmoveto
+  lnames exch get leftcenter
+} for
+0 1 11
+{
+  dup 10 mul -115 add 12.5 exch moveto 15 0 rlineto
+  dup 20 mul -165 add 42.5 exch lineto 7 0 rlineto 3 0 rmoveto
+  rnames exch get rightcenter
+} for
+stroke
+
+/Times-Roman findfont 5 scalefont setfont
+0 1 12 
+{ dup -10 mul 2 add -9 exch moveto 1 add (  ) cvs llap }
+for
+0 1 11 
+{ dup 10 mul -113 add 20 exch moveto 14 add (  ) cvs show } 
+for
+
+% Label this.
+labelfont setfont
+5 -3 inch moveto (a. Parallel Port) centershow
+
+grestore
+
+250 380 moveto 250 720 lineto stroke
+
+% draw the pinouts for the 4066 and the 7406
+gsave
+250 340 translate
+
+/boxlen 3.5 inch def
+/boxwid 100 def
+/pinspc boxlen 7 3 mul 1 add div def
+/drawbox
+{
+  0 0 moveto boxlen 0 lineto 0 boxwid rlineto 0 boxwid lineto 
+  0 boxwid -4 div rlineto
+  currentpoint boxwid -4 div add boxwid 4 div 90 270 arcn
+  closepath
+  stroke
+
+  0 1 6 
+  {
+    3 mul 1 add pinspc mul 0 moveto
+    0 -5 rlineto pinspc dup add 0 rlineto 0 5 rlineto
+    0 boxwid rmoveto 0 5 rlineto 
+    pinspc -2 mul 0 rlineto 0 -5 rlineto 
+  } for
+  stroke
+} def
+
+/SSI % chipname ---
+{
+  drawbox
+
+  /Times-Roman findfont 16 scalefont setfont
+  pinspc 2 mul boxwid 16 sub moveto (Vcc) centershow
+  pinspc 20 mul 3 moveto (GND) centershow
+
+  /Times-Roman findfont 24 scalefont setfont
+  boxlen 2 div boxwid 2 div moveto centercenter
+} def
+
+% draw the pinout for the 4066
+gsave
+  40 50 translate
+  (4066) SSI
+
+  {
+    2 pinspc mul 0 moveto
+    0 20 rlineto
+    19 0 rlineto 0 4 rlineto
+    0 22 rmoveto 0 4 rlineto
+    15 0 rlineto 0 -50 rlineto
+    stroke
+    5 pinspc mul boxwid moveto 
+    0 -20 rlineto
+    -30 0 rlineto
+    0 -45 rlineto
+    5 0 rlineto switchbox
+    stroke
+
+    8 pinspc mul boxwid moveto
+    0 -20 rlineto
+    25 0 rlineto
+    switchbox 
+      gsave 9 11 rmoveto 0 9 rlineto stroke
+    grestore
+    9 -11 rmoveto 0 -4 rlineto 35 0 rlineto
+    0 35 rlineto
+    stroke
+  }
+  dup exec
+  [-1 0 0 -1 boxlen boxwid] concat exec
+grestore
+
+% draw the pinout for the 7406
+gsave
+  40 240 translate
+  (7406) SSI
+
+  pinspc 2 mul 0 translate
+  3
+  {
+    0 0 moveto 0 20 rlineto 
+    8 0 rlineto buffer bubble 8 0 rlineto
+    0 -20 rlineto
+
+    pinspc 3 mul boxwid moveto
+    0 -20 rlineto
+    8 0 rlineto buffer bubble 8 0 rlineto
+    0 20 rlineto
+
+    6 pinspc mul 0 translate
+  } repeat
+  stroke
+grestore
+
+% Label this.
+labelfont setfont
+166 195 moveto (c. Glue-Logic Pinouts) centercenter
+
+grestore
+
+
+

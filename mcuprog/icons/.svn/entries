@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="53"
+   name=""
+   committed-date="2007-01-23T17:40:50.816389Z"
+   url="svn://192.192.0.1/mcuprog/icons"
+   last-author="root"
+   kind="dir"
+   uuid="8553746f-c726-0410-a30b-8dccbf3416dc"
+   repos="svn://192.192.0.1"
+   revision="53"/>
+<entry
+   committed-rev="53"
+   name="spinbtn.xpm"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="40ab21ed6437569728b237b1686806c3"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="notebook.xpm"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="9a14b3b20b7923776ff478280d36d045"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="stattext.xpm"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="9775238b49d642c35c2200c44131923e"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="bmpbtn.xpm"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="59e55ebd51c8f0a4c358002b72cad94b"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="slider.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="bd4139769253da8a344f45882d0ea750"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="listbox.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="56a69ff1bc09a84c4732aa94a6c04280"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="statbox.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="a906020e3e6cf5f97bd3e7ba7c93947c"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="text.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="df5cc479cd42f0c34bfe8a4db871dee2"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="checkbox.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="3f6ce85113f4c02b31b3a3d612d75f9e"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="radiobox.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="a08c11a608cbd07bbfffe7182e7293b3"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="scrolbar.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="d03f7a472d99a10c4e55923f75d1d8db"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="combobox.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="4e3b004d6d709fde414accdd36aeb536"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="gauge.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="8dc4328031aae1b960e495bfc3144730"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="button.xpm"
+   text-time="2007-01-23T17:51:29.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="8315d62533e7d6e6120d8e4f06a76d81"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+</wc-entries>

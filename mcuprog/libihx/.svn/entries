@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="53"
+   name=""
+   committed-date="2007-01-23T17:40:50.816389Z"
+   url="svn://192.192.0.1/mcuprog/libihx"
+   last-author="root"
+   kind="dir"
+   uuid="8553746f-c726-0410-a30b-8dccbf3416dc"
+   repos="svn://192.192.0.1"
+   revision="53"/>
+<entry
+   committed-rev="53"
+   name="lx"
+   text-time="2007-01-23T17:51:27.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="2e1c0c4242afc635b583f7576023ef7e"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:27.000000Z"/>
+<entry
+   committed-rev="53"
+   name="lx1"
+   text-time="2007-01-23T17:51:27.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="e7eb134e7c51873af66dc6fba0428798"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:27.000000Z"/>
+<entry
+   committed-rev="53"
+   name="ihx.c"
+   text-time="2007-01-23T17:51:27.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="d41d8cd98f00b204e9800998ecf8427e"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:27.000000Z"/>
+</wc-entries>

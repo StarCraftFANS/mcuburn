@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="53"
+   name=""
+   committed-date="2007-01-23T17:40:50.816389Z"
+   url="svn://192.192.0.1/mcuprog/burn"
+   last-author="root"
+   kind="dir"
+   uuid="8553746f-c726-0410-a30b-8dccbf3416dc"
+   repos="svn://192.192.0.1"
+   revision="53"/>
+<entry
+   committed-rev="53"
+   name="io_ports.c"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="6926f2ec6c1d1d127a47cc685c882e7e"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="schematic.ps"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="70a35c7cd2dd8b0bc6c4954d8364b7c3"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="prog84"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="0ba38d7bf33cc278952d8e13d3b96676"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="lp_io.c"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="34ba6e9ec2dd751734725ad5d9e5f2ff"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="PP.ASC"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="e73c146f8b6c41ba78b31fc9c928c2d8"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="io_ports.h"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="433d9c0753601795ae8c53a1e039f471"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="dump.c"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="0616c0b02e195449b3f85aca4b7a22eb"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="prog84-0.9.tar.gz.README"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="ee4c9f6ca0bbfaefafdb6ce3efa27e43"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="PIC74.DOC"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="39f76c3ddf77c04e10badf23affaf66d"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="jig.c"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="105396785c12fef4018f8e6e0e17d97f"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="lp_cfg"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="378f299a5345d456a97d2729473a9f1a"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="prog84-0.9.tar.gz"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="57f228c78c34cd78a5dae4beb78900d7"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="pic74pgm.zip"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="419495e448165d270a962326a12b6fd8"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="README"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="0f99b8b04946e22dd017857447bd22fa"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="lpttool"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="2a28871c4c7eb5c918c0d6a89b5f4213"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="prog84.man"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="2b3bfab384da2fd4b9e0f567f7f33a1a"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="progmain.c"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="f2eead2905073de9b3866fa0285efd7c"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="mipi.zip"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="ddae752cf8a1ea39f3295dfdd62fc0dc"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="prog84.c"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="3d5caddc50c90ebd563a9260c617f71e"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="dump"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="860e18e5d0cf6fc2e344940fc6066123"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="PIC74.EXE"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="cf81d7ea1025575c92cba2aab8216b3c"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="PIC74.C"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="4b6be282ad1aea53971f99ac16d17113"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="schematic.pdf"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="f53b9d6e2aa7e229f75ee13137ae2f90"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="mipp.gif"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="99f39799b4ac09bf3f2dc0eb2694f57e"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="old-README"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="0518cad8128f8915812efe3ad061addf"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="prog84.h"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="c90530968f496671a000daf03e289184"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="index.html"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="b5eeabf4c9302da2e32b15a92b681171"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="mipi.txt"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="dd8e9007e854c573d2652d0eceef5602"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="Makefile"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="b90af05748429dbe7545f796c2f1e956"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+<entry
+   committed-rev="53"
+   name="lpttool.c"
+   text-time="2007-01-23T17:51:28.000000Z"
+   committed-date="2007-01-23T17:40:50.816389Z"
+   checksum="ec041f6e2237874aee75e4e3f457ee17"
+   last-author="root"
+   kind="file"
+   prop-time="2007-01-23T17:51:28.000000Z"/>
+</wc-entries>

@@ -1,0 +1,8 @@
+power = !d1
+mclr: !d0
+rb7: ~d2
+rb6: ~d3
+rb7_f = ~ack
+rb6_f = ~s4
+
+base = 0x378
